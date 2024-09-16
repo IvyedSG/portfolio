@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus, @typescript-eslint/no-unsafe-assignment */
 'use client'
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
