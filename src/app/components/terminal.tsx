@@ -138,24 +138,19 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       case 'projects':
         response = [
           {
-            nombre: "E-commerce Platform",
-            tecnologias: ["Next.js", "GraphQL", "Stripe", "MongoDB"],
-            descripcion: "Plataforma de comercio electrónico escalable y de alto rendimiento."
+            nombre: "Forua",
+            tecnologias: ["HTML", "CSS", "JavaScript", "Python", "FastAPI"],
+            descripcion: "Foro universitario con la facilidad de conocer y evaluar a los docentes"
           },
           {
-            nombre: "Task Management App",
-            tecnologias: ["React", "Redux", "Node.js", "PostgreSQL"],
-            descripcion: "Aplicación de gestión de tareas para equipos distribuidos."
-          },
-          {
-            nombre: "Social Media Dashboard",
-            tecnologias: ["Vue.js", "Express", "Socket.io", "Redis"],
-            descripcion: "Dashboard para análisis y gestión de redes sociales."
+            nombre: "Superlearner",
+            tecnologias: ["React", "Material UI", "Vite JS", "Docker", "Python", "Django"],
+            descripcion: "Aplicación de gestión y asistencia de profesores"
           },
           {
             nombre: "Portfolio Terminal",
             tecnologias: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-            descripcion: "Portfolio interactivo con estilo de terminal (este proyecto)."
+            descripcion: "Portfolio con temática de terminal"
           }
         ]
         break
@@ -166,8 +161,8 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         break
       case 'social':
         response = {
-          github: "github.com/deyvicodes",
-          linkedin: "linkedin.com/in/deyvisanchez",
+          github: "https://github.com/IvyedSG",
+          linkedin: "https://linkedin.com/in/deyvisanchez",
         }
         break
     case 'secret':
@@ -357,7 +352,7 @@ function TypewriterText({
           scrollToBottom(); // Llamamos a la función callback
         }
       }
-    }, 5);
+    }, 1);
 
     return () => clearInterval(timer);
   }, [text, userScrolled, scrollToBottom]); // Asegúrate de incluir scrollToBottom como dependencia
