@@ -92,19 +92,20 @@ export default function TerminalPortfolio() {
   
     currentOutputRef?.addEventListener('scroll', handleScroll);
     return () => currentOutputRef?.removeEventListener('scroll', handleScroll);
-  }, []);
+  }); // Si `scrollToBottom` es una función o dependencia utilizada en este hook.
   
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (awaitingPassword) {
-      checkPassword(input)
+      checkPassword(input);
     } else {
-      processCommand(input)
+      processCommand(input);
     }
-    setInput('')
-    setUserScrolled(false)
-  }
+    setInput('');
+    setUserScrolled(false);
+  };
+  
 
   const processCommand = (cmd: string): void => {
     const trimmedCmd = cmd.trim().toLowerCase()
@@ -183,7 +184,7 @@ export default function TerminalPortfolio() {
         response = ASCII_ART
         break
       default:
-        response = `Coomando no reconocido: ${trimmedCmd}. Escribe 'help' para ver los comandos disponibles.`
+        response = `El comando no reconocido es: &quot;{trimmedCmd}&quot;. Escribe &quot;help&quot; para ver los comandos disponibles.`
     }
 
     setOutput((prev) => [...prev, `viisitor@deyvi:~$ ${cmd}`, ...(typeof response === 'string' ? [response] : [JSON.stringify(response, null, 2)]), ''])
