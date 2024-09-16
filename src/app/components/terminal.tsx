@@ -80,17 +80,20 @@ export default function TerminalPortfolio() {
   }, [])
 
   useEffect(() => {
+    const currentOutputRef = outputRef.current;
+  
     const handleScroll = () => {
-      if (outputRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = outputRef.current
-        const isScrolledToBottom = scrollHeight - scrollTop === clientHeight
-        setUserScrolled(!isScrolledToBottom)
+      if (currentOutputRef) {
+        const { scrollTop, scrollHeight, clientHeight } = currentOutputRef;
+        const isScrolledToBottom = scrollHeight - scrollTop === clientHeight;
+        setUserScrolled(!isScrolledToBottom);
       }
-    }
-
-    outputRef.current?.addEventListener('scroll', handleScroll)
-    return () => outputRef.current?.removeEventListener('scroll', handleScroll)
-  }, [])
+    };
+  
+    currentOutputRef?.addEventListener('scroll', handleScroll);
+    return () => currentOutputRef?.removeEventListener('scroll', handleScroll);
+  }, []);
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -103,7 +106,7 @@ export default function TerminalPortfolio() {
     setUserScrolled(false)
   }
 
-  const processCommand = (cmd: string) => {
+  const processCommand = (cmd: string): void => {
     const trimmedCmd = cmd.trim().toLowerCase()
     let response: string | object = ''
 
@@ -378,7 +381,7 @@ function JSONDisplay({ json, theme }: { json: any; theme: typeof THEMES['dark'] 
         {level === 0 && <span className={theme.tertiary}>{'{'}</span>}
         {Object.entries(obj).map(([key, value], index, arr) => (
           <motion.div  
-          
+
             key={index}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
