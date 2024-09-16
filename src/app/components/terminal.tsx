@@ -377,7 +377,8 @@ function JSONDisplay({ json, theme }: { json: any; theme: typeof THEMES['dark'] 
       >
         {level === 0 && <span className={theme.tertiary}>{'{'}</span>}
         {Object.entries(obj).map(([key, value], index, arr) => (
-          <motion.div 
+          <motion.div  
+          
             key={index}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
