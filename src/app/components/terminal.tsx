@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Terminal, Sun, Moon, Github, Linkedin, Mail, Coffee, ChevronRight } from 'lucide-react'
 
@@ -81,30 +81,30 @@ export default function TerminalPortfolio() {
 
   useEffect(() => {
     const currentOutputRef = outputRef.current;
-  
+
     const handleScroll = () => {
-      if (currentOutputRef) {
-        const { scrollTop, scrollHeight, clientHeight } = currentOutputRef;
-        const isScrolledToBottom = scrollHeight - scrollTop === clientHeight;
-        setUserScrolled(!isScrolledToBottom);
-      }
+        if (currentOutputRef) {
+            const { scrollTop, scrollHeight, clientHeight } = currentOutputRef;
+            const isScrolledToBottom = scrollHeight - scrollTop === clientHeight;
+            setUserScrolled(!isScrolledToBottom);
+        }
     };
-  
+
     currentOutputRef?.addEventListener('scroll', handleScroll);
     return () => currentOutputRef?.removeEventListener('scroll', handleScroll);
-  }); // Si `scrollToBottom` es una función o dependencia utilizada en este hook.
+}, [outputRef]);
   
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (awaitingPassword) {
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  if (awaitingPassword) {
       checkPassword(input);
-    } else {
+  } else {
       processCommand(input);
-    }
-    setInput('');
-    setUserScrolled(false);
-  };
+  }
+  setInput('');
+  setUserScrolled(false);
+};
   
 
   const processCommand = (cmd: string): void => {
@@ -311,51 +311,66 @@ export default function TerminalPortfolio() {
   )
 }
 
-function TypewriterText({ text, theme, outputRef, userScrolled }: { text: string; theme: typeof THEMES['dark']; outputRef: React.RefObject<HTMLDivElement>; userScrolled: boolean }) {
-  const [displayText, setDisplayText] = useState('')
+function TypewriterText({
+  text,
+  theme,
+  outputRef,
+  userScrolled,
+}: {
+  text: string;
+  theme: typeof THEMES['dark'];
+  outputRef: React.RefObject<HTMLDivElement>;
+  userScrolled: boolean;
+}) {
+  const [displayText, setDisplayText] = useState('');
+
+  // Función scrollToBottom usando useCallback
+  const scrollToBottom = useCallback(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, [outputRef]);
 
   useEffect(() => {
-    let content = text
+    let content = text;
     if (text.startsWith('{') || text.startsWith('[')) {
       try {
-        const parsed = JSON.parse(text)
-        content = JSON.stringify(parsed, null, 2)
+        const parsed = JSON.parse(text);
+        content = JSON.stringify(parsed, null, 2);
       } catch (error) {
-        console.error('Error parsing JSON:', error)
+        console.error('Error parsing JSON:', error);
       }
     }
 
-    let i = 0
+    let i = 0;
     const timer = setInterval(() => {
       if (i < content.length) {
-        setDisplayText((prev) => prev + content.charAt(i))
-        i++
+        setDisplayText((prev) => prev + content.charAt(i));
+        i++;
         if (!userScrolled) {
-          scrollToBottom()
+          scrollToBottom(); // Llamamos a la función callback
         }
       } else {
-        clearInterval(timer)
+        clearInterval(timer);
         if (!userScrolled) {
-          scrollToBottom()
+          scrollToBottom(); // Llamamos a la función callback
         }
       }
-    }, 5)
+    }, 5);
 
-    return () => clearInterval(timer)
-  }, [text, userScrolled])
-
-  const scrollToBottom = () => {
-    if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight
-    }
-  }
+    return () => clearInterval(timer);
+  }, [text, userScrolled, scrollToBottom]); // Asegúrate de incluir scrollToBottom como dependencia
 
   if (text.startsWith('{') || text.startsWith('[')) {
     try {
-      const jsonObj = JSON.parse(text)
-      return <JSONDisplay json={jsonObj} theme={theme} />
+      const jsonObj = JSON.parse(text);
+      return <JSONDisplay json={jsonObj} theme={theme} />;
     } catch {
-      return <pre className={`whitespace-pre-wrap ${text.startsWith('visitor@') ? theme.prompt : ''}`}>{displayText}</pre>
+      return (
+        <pre className={`whitespace-pre-wrap ${text.startsWith('visitor@') ? theme.prompt : ''}`}>
+          {displayText}
+        </pre>
+      );
     }
   }
 
@@ -363,11 +378,11 @@ function TypewriterText({ text, theme, outputRef, userScrolled }: { text: string
     <div className={`whitespace-pre-wrap ${text.startsWith('visitor@') ? theme.prompt : ''}`}>
       {displayText}
     </div>
-  )
+  );
 }
 
-function JSONDisplay({ json, theme }: { json: any; theme: typeof THEMES['dark'] }) {
-  const renderJSON = (obj: any, level = 0) => {
+function JSONDisplay({ json, theme }: { json: string; theme: typeof THEMES['dark'] }) {
+  const renderJSON = (obj: unknown, level = 0) => {
     if (typeof obj !== 'object' || obj === null) {
       return <span className={theme.accent}>{JSON.stringify(obj)}</span>
     }
